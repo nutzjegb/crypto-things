@@ -1,0 +1,17 @@
+Nice to read
+https://cedricvanrompay.gitlab.io/cryptopals/challenges/17.html
+
+padding oracle thingy
+**TODO check / add check poc?**  
+Even if the receiver requires a certain amount of input bytes (so we cannot remove blocks), we could still use this attack.
+Instead of removing blocks from the stream, we modify previous blocks which causes the next block to change.
+
+Quick recap on how Cipher Block Chaining CBC mode encryption works.  
+![Cipher Block Chaining (CBC) mode](/images/CBC_encryption.png)  
+As you can see in the image, altering the second to last block, causes the ciphertext of the last block to change as  
+`ciphertext = f(key, previous ciphertext ^ plaintext)` where f is the block cipher (for the first block we modify the IV I guess).
+
+So if we modify the last bit in the second to last block, we should get a padding error (or by chance, set the last byte to 0x01). As we already know the xor key of the last block, we can change the padding size to something greater than the block size and continue. This way we can decrypt (if the receiver allows more padding bytes than the block size) up to 256 bytes in a single message.
+
+Also see 'The Cryptographic Doom Principle' which boils down to:  
+*if you have to perform any cryptographic operation before verifying the MAC on a message you’ve received, it will somehow inevitably lead to doom* -- [moxie.org](https://moxie.org/2011/12/13/the-cryptographic-doom-principle.html)
