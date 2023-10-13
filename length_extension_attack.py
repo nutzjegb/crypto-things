@@ -52,7 +52,7 @@ my_server(cmd, valid_api_sig)
 
 
 
-def construct_evil_api_call(cmd, orig_sig, cmd_to_append):
+def construct_evil_api_call(orig_cmd, orig_sig, cmd_to_append):
     sha256 = Sha256()
     # 'resume' the hash operation
     sha256.mlen = 64
@@ -64,13 +64,14 @@ def construct_evil_api_call(cmd, orig_sig, cmd_to_append):
     # Next construct the new cmd
     # Note that the secret length must be guessed somehow
     secret_len = 16
-    new_cmd = cmd + sha256.pad(secret_len + len(cmd)) + cmd_to_append
+    new_cmd = orig_cmd + sha256.pad(secret_len + len(orig_cmd)) + cmd_to_append
     return (new_cmd, sha256.digest())
 
 
 input('Hit a key for evils..')
 
 cmd_to_append = b"\0ChangePasswordTo=12345678"
-evil_cmd, forged_api_sig = construct_evil_api_call(cmd, valid_api_sig, cmd_to_append)
+evil_cmd, forged_api_sig = construct_evil_api_call(
+    cmd, valid_api_sig, cmd_to_append)
 print("Evil attacker sending a cmd...")
 my_server(evil_cmd, forged_api_sig)

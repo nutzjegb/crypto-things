@@ -15,7 +15,11 @@ def derive_key(key):
 
 
 def pae(arr):
-    ''' PASETO PAE (Pre-Authentication Encoding) '''
+    '''
+    Encode a message using the
+    PASETO (platform-agnostic security tokens)
+    PAE (Pre-Authentication Encoding) standard
+    '''
     def LE64(length):
         assert length < 1 << 64
         return struct.pack('<Q', length)
